@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XILabsStudio.Pages.SpeechSynthesisPage"
+             x:DataType="viewModels:SpeechSynthesisViewModel"
+             xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+             Shell.BackgroundColor="DarkRed"
+             Title="{x:Static strings:XIResources.Shell_SpeechSynthesisTabTitle}" SemanticProperties.Description="{OnPlatform WinUI={x:Static strings:XIResources.SpeechSynthesisPage_Description}}">
+
+    <ContentPage.BindingContext>
+        <viewModels:SpeechSynthesisViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Loaded"
+            Command="{Binding InitializeCommand}"/>
+        
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding ReloadCommand}"/>
+    </ContentPage.Behaviors>
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding RefreshCommand}">
+    <ScrollView>
+        <Grid
+        RowDefinitions="{OnIdiom Desktop='*, *', Phone='*, *, *'}"
+                        ColumnDefinitions="{OnIdiom Desktop='*, *', Phone=*}"
+            RowSpacing="24" ColumnSpacing="24">
+
+        <Label
+            Text="{x:Static strings:XIResources.SpeechSynthesisPage_Description}"
+            FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start"
+            Grid.Row="0"
+                            Grid.ColumnSpan="{OnIdiom Desktop=2, Phone=1}"/>
+
+        <Border Grid.Row="1" Grid.Column="0">
+
+            <Grid
+                RowDefinitions="*, *, *, *"
+                                ColumnDefinitions="*, *"
+                    RowSpacing="12" ColumnSpacing="12">
+
+                <Label
+                Text="{x:Static strings:XIResources.SpeechSynthesisPage_Settings}"
+            FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start"
+                    Grid.Row="0" Grid.ColumnSpan="2"/>
+
+                <Picker x:Name="VoicePicker"
+        Title="{x:Static strings:XIResources.SpeechSynthesisPage_Voice}"
+                        ItemsSource="{Binding Voices}"
+                        SelectedItem="{Binding SelectedVoice, Mode=TwoWay}"
+                                ItemDisplayBinding="{Binding Title}"
+                        Grid.Row="1" Grid.Column="0"/>
+
+                <Button
+                    Text="{x:Static strings:XIResources.SpeechSynthesisPage_AddVoice}"
+                                FontFamily="Inter" FontSize="11"
+            TextColor="DarkBlue"
+                    Command="{Binding AddVoiceCommand}"
+                    Grid.Row="1" Grid.Column="1"/>
+
+                <Button
+                    Text="{x:Static strings:XIResources.SpeechSynthesisPage_VoiceSettings}"
+                                FontFamily="Inter" FontSize="11"
+            TextColor="DarkBlue"
+                    Command="{Binding OpenVoiceSettingsCommand}"
+                    Grid.Row="2" Grid.Column="0"/>
+
+                <Button
+                    Text="{Binding SelectedModel.Name}"
+                                FontFamily="Inter" FontSize="11"
+            TextColor="DarkBlue"
+                                    Command="{Binding ChooseAModelCommand}"
+                    Grid.Row="3" Grid.Column="0"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="{OnIdiom Desktop=1, Phone=2}" Grid.Column="{OnIdiom Desktop=1, Phone=0}">
+
+            <Grid
+                RowDefinitions="Auto, *, Auto, Auto"
+                    RowSpacing="12">
+
+                <Label
+                    x:Name="TTSTextLabel"
+                    Text="{x:Static strings:XIResources.SpeechSynthesisPage_TTSInput}"
+            FontFamily="AtkinsonHyperlegible" FontSize="12.5"
+            TextColor="Black" HorizontalTextAlignment="Start"
+                    Grid.Row="0"/>
+
+                <Editor
+                    Loaded="TTSInputEditorSetFocus"
+                    x:Name="TTSInputEditor"
+                    SemanticProperties.Hint="{Binding Source={x:Reference TTSTextLabel}, Path=Text}"
+                    MaxLength="2500"
+                    AutoSize="TextChanges"
+            FontFamily="AtkinsonHyperlegible" FontSize="16.7"
+            TextColor="DarkBlue" BackgroundColor="White" HorizontalTextAlignment="Start"
+                    Grid.Row="1"/>
+
+                <Label
+                    x:Name="QuotaLabel"
+                                FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="PowderBlue" HorizontalTextAlignment="Start"
+                    Grid.Row="2">
+                    <Label.Text>
+                        <MultiBinding StringFormat="{}{0} / {1} {2}: {3}">
+                            <Binding Source="{x:Reference TTSInputEditor}" Path="Text.Length" FallbackValue="0"/>
+                            <Binding Source="{x:Reference TTSInputEditor}" Path="MaxLength" FallbackValue="2500"/>
+                            <Binding Source="{x:Static strings:XIResources.SpeechSynthesisPage_TotalRemainingQuota}"/>
+                            <MultiBinding Converter="{toolkit:MultiMathExpressionConverter}" ConverterParameter="x0 - x1">
+                                <Binding Path="User.Subscription.CharacterLimit" FallbackValue="0"/>
+                                <Binding Path="User.Subscription.CharacterCount" FallbackValue="0"/>
+                            </MultiBinding>
+                        </MultiBinding>
+                    </Label.Text>
+                </Label>
+
+                <Button
+                    Text="{x:Static strings:XIResources.SpeechSynthesisPage_Generate}"
+                                FontFamily="Inter" FontSize="12.5"
+            TextColor="White" Background="DarkBlue"
+                    Command="{Binding GenerateSpeechCommand}"
+                    CommandParameter="{Binding Source={x:Reference TTSInputEditor}, Path=Text}"
+                    Grid.Row="3"/>
+            </Grid>
+        </Border>
+        </Grid>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>

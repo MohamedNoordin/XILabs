@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XILabsStudio.Pages.DubbingPage"
+             xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+                          xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="{x:Static strings:XIResources.Shell_DubbingTabTitle}">
+
+    <ContentPage.BindingContext>
+        <viewModels:DubbingViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding InitializeCommand}"/>
+    </ContentPage.Behaviors>
+
+    <VerticalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

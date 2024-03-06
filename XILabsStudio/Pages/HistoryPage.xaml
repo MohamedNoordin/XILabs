@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XILabsStudio.Pages.HistoryPage"
+             xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+             xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Name="This"
+             Title="{x:Static strings:XIResources.Shell_HistoryTabTitle}">
+
+    <ContentPage.BindingContext>
+        <viewModels:HistoryPageViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Loaded"
+            Command="{Binding InitializeCommand}"/>
+    </ContentPage.Behaviors>
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+             Command="{Binding RefreshCommand}">
+            <Grid
+        RowDefinitions="30, 30, *"
+            RowSpacing="8">
+                <Label 
+            Text="{x:Static strings:XIResources.HistoryPage_Description}"
+            Grid.Row="0"/>
+
+                <HorizontalStackLayout
+                Spacing="8"
+            Grid.Row="1">
+                    <Label>
+                        <Label.Text>
+                            <MultiBinding StringFormat="{}{0} / {1} {2}">
+                                <Binding Path="SelectedItemsCount"/>
+                                <Binding Path="CurrentPage.Histories.Count"/>
+                                <Binding Source="{Static strings:XIResources.Selected}"/>
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+
+                    <Button
+                Text="{x:Static strings:XIResources.HistoryPage_DownloadSelected}"
+                Command="{Binding DownloadSelectedCommand}"/>
+
+                    <Button
+                Text="{x:Static strings:XIResources.HistoryPage_RemoveSelected}"
+                Command="{Binding RemoveSelectedCommand}"/>
+                </HorizontalStackLayout>
+
+                <ListView x:Name="HistoryListView"
+                ItemsSource="{Binding CurrentPage.Histories}"
+                          HeightRequest="250"
+                          RowHeight="150"
+                      CachingStrategy="RecycleElement"
+                          IsVisible="{Binding IsLoading,Converter={toolkit:InvertedBoolConverter}}"
+                     Grid.Row="2">
+                    <ListView.Header>
+                        <HorizontalStackLayout Spacing="8">
+                            <CheckBox IsChecked="{Binding IsAllSelected}"
+                                  SemanticProperties.Description="{Static strings:XIResources.SelectAll}" ToolTipProperties.Text="{Static strings:XIResources.SelectAll}">
+                                <CheckBox.Behaviors>
+                                    <toolkit:EventToCommandBehavior
+                                    EventName="CheckedChanged"
+                                    Command="{Binding SelectionCommand}"/>
+                                </CheckBox.Behaviors>
+                            </CheckBox>
+
+                            <Label Text="Voice"/>
+                            <Label Text="Date"/>
+                            <Label Text="State"/>
+                            <Label Text="Text"/>
+                            <Label Text="Play"/>
+                        </HorizontalStackLayout>
+                    </ListView.Header>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <ViewCell.ContextActions>
+                                    <MenuItem Text="{Static strings:XIResources.Copy}" Command="{Binding Source={x:Reference This}, Path=BindingContext.CopyHistoryTextCommand}" CommandParameter="{Binding Source={x:Reference HistoryListView}, Path=SelectedItem}"/>
+                                    <MenuItem Text="{Static strings:XIResources.Download}" Command="{Binding Source={x:Reference This}, Path=BindingContext.DownloadThisCommand}" CommandParameter="{Binding Source={x:Reference HistoryListView}, Path=SelectedItem}"/>
+                                    <MenuItem Text="{Static strings:XIResources.Remove}" Command="{Binding Source={x:Reference This}, Path=BindingContext.RemoveThisCommand}" CommandParameter="{Binding Source={x:Reference HistoryListView}, Path=SelectedItem}"/>
+                                </ViewCell.ContextActions>
+                                    <Grid ColumnDefinitions="*, *, *, *, *, *"
+                              ColumnSpacing="8">
+                                    <CheckBox
+                                    SemanticProperties.Description="{Static strings:XIResources.Select}" ToolTipProperties.Text="{Static strings:XIResources.Select}"
+                                    IsChecked="{Binding IsSelected}"
+                                Grid.Column="0">
+                                        <CheckBox.Behaviors>
+                                            <toolkit:EventToCommandBehavior
+                                            EventName="CheckedChanged"
+                                            Command="{Binding Source={x:Reference This}, Path=BindingContext.ItemSelectionCommand}"
+                                            CommandParameter="{Binding}"/>
+                                        </CheckBox.Behaviors>
+                                    </CheckBox>
+                                    <Label
+                                Text="{Binding VoiceName}"
+                                Grid.Column="1"/>
+                                    <Label
+                                Text="{Binding DateCreated}"
+                                Grid.Column="3"/>
+                                    <Label
+                                Text="{Binding State}"
+                                Grid.Column="2"/>
+                                    <Label
+                                Text="{Binding Text}"
+                                Grid.Column="4"/>
+                                    <ImageButton ToolTipProperties.Text="{Static strings:XIResources.Play}"
+                                                 Source="play_audio.png"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:HistoryPageViewModel}}, Path=PlayCommand}"
+                                             CommandParameter="{Binding HistoryItemId}"
+                                Grid.Column="5"/>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                    <ListView.Footer>
+                        <toolkit:DockLayout>
+                            <Label HorizontalOptions="Start">
+                                <Label.Text>
+                                    <MultiBinding StringFormat="{}{0} {1}">
+                                        <Binding Source="{Static strings:XIResources.Page}"/>
+                                        <Binding Path="CurrentPage.Number"/>
+                                    </MultiBinding>
+                                </Label.Text>
+                            </Label>
+
+                            <HorizontalStackLayout HorizontalOptions="End"
+                                                   Spacing="10">
+                                <Button Text="{Static strings:XIResources.Previous}"
+                                Command="{Binding PreviousPageCommand}"/>
+                                <Button Text="{Static strings:XIResources.Next}"
+                                Command="{Binding NextPageCommand}"/>
+                            </HorizontalStackLayout>
+                        </toolkit:DockLayout>
+                    </ListView.Footer>
+                </ListView>
+            </Grid>
+    </RefreshView>
+</ContentPage>

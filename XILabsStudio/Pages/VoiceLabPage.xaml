@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XILabsStudio.Pages.VoiceLabPage"
+             xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+                          xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Name="This"
+             Title="{x:Static strings:XIResources.Shell_VoiceLabTabTitle}">
+
+    <ContentPage.BindingContext>
+        <viewModels:VoiceLabViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Loaded"
+            Command="{Binding InitializeCommand}"/>
+    </ContentPage.Behaviors>
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+             Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <Grid
+        RowDefinitions="*, *"
+                RowSpacing="24">
+
+                <Label Text="{Static strings:XIResources.VoiceLabPage_Description}"
+                           FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start"
+               Grid.Row="0"/>
+                <ListView x:Name="VoicesListView"
+                ItemsSource="{Binding Voices}"
+                          RowHeight="80"
+                      CachingStrategy="RecycleElement"
+                    Grid.Row="1">
+
+                    <ListView.Header>
+                        <Label
+                                    FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="Blue" HorizontalTextAlignment="Start">
+                            <Label.Text>
+                                <MultiBinding StringFormat="{}{0} / {1}">
+                                    <Binding Path="Voices.Count" FallbackValue="0"/>
+                                    <Binding Path="User.Subscription.VoiceLimit" FallbackValue="0"/>
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+                    </ListView.Header>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <ViewCell.ContextActions>
+                                    <MenuItem Text="{Static strings:XIResources.Use}" Command="{Binding Source={x:Reference This}, Path=BindingContext.UseThisCommand}" CommandParameter="{Binding Source={x:Reference VoicesListView}, Path=SelectedItem}"/>
+                                    <MenuItem Text="{Static strings:XIResources.Edit}" Command="{Binding Source={x:Reference This}, Path=BindingContext.EditThisCommand}" CommandParameter="{Binding Source={x:Reference VoicesListView}, Path=SelectedItem}"/>
+                                    <MenuItem Text="{Static strings:XIResources.Remove}" Command="{Binding Source={x:Reference This}, Path=BindingContext.RemoveThisCommand}" CommandParameter="{Binding Source={x:Reference VoicesListView}, Path=SelectedItem}"/>
+                                </ViewCell.ContextActions>
+                                <Grid RowDefinitions="*, *, *" ColumnDefinitions="*, *, *"
+                                  RowSpacing="16" ColumnSpacing="8">
+                                    <Label Text="{Binding Name}"
+                                       Grid.Row="0" Grid.Column="0"/>
+
+                                    <Label Text="{Binding VoiceID}"
+                                       Grid.Row="0" Grid.Column="1"/>
+
+                                    <Switch ToolTipProperties.Text="{Static strings:XIResources.Sharing}"
+                                        SemanticProperties.Description="{Static strings:XIResources.Sharing}"
+                                       Grid.Row="0" Grid.Column="2"/>
+
+                                    <Label
+                                       Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                                        <Label.Text>
+                                            <MultiBinding StringFormat="{}{0} {1} {2}">
+                                                <Binding Path="Labels.AdditionalProp1"/>
+                                                <Binding Path="Labels.AdditionalProp2"/>
+                                                <Binding Path="Labels.AdditionalProp3"/>
+                                            </MultiBinding>
+                                        </Label.Text>
+                                    </Label>
+
+                                    <HorizontalStackLayout
+                                    Spacing="16"
+        Grid.Row="1" Grid.Column="2">
+                                        <Button
+                                        Text="{Static strings:XIResources.Use}"
+                                                                            Command="{Binding Source={x:Reference This}, Path=BindingContext.UseVoiceCommand}"
+                                        CommandParameter="{Binding}"/>
+                                        <Button
+                                        Text="{Static strings:XIResources.Edit}"
+                                                                            Command="{Binding Source={x:Reference This}, Path=BindingContext.EditVoiceCommand}"
+                                        CommandParameter="{Binding}"/>
+                                        <Button
+                                        Text="{Static strings:XIResources.Remove}"
+                                        Command="{Binding Source={x:Reference This}, Path=BindingContext.RemoveVoiceCommand}"
+                                        CommandParameter="{Binding}"/>
+                                    </HorizontalStackLayout>
+                                    <Label Text="{Binding Description}"
+                                       Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"/>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                    <ListView.Footer>
+                        <Button
+                        Text="{Static strings:XIResources.VoiceLabPage_AddGenerativeOrClonedVoice}"
+                                    FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="DarkBlue"
+                        Command="{Binding AddVoiceCommand}"/>
+                    </ListView.Footer>
+                </ListView>
+            </Grid>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

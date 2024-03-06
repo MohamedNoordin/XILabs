@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                              xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+               xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+             x:Class="XILabsStudio.Popups.AddVoicePopup"
+               VerticalOptions="Center" HorizontalOptions="Center">
+
+    <VerticalStackLayout HeightRequest="900" HorizontalOptions="Fill">
+
+            <VerticalStackLayout.BindingContext>
+                <viewModels:AddVoiceViewModel />
+            </VerticalStackLayout.BindingContext>
+            <VerticalStackLayout.Behaviors>
+                <toolkit:EventToCommandBehavior
+                EventName="Loaded"
+                Command="{Binding InitializeCommand}"/>
+            </VerticalStackLayout.Behaviors>
+
+        <Label Text="{Static strings:XIResources.AddVoicePopup_TypeOfVoiceToCreate}"
+                           FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start"
+               Margin="20,20,20,20"/>
+
+        <Button
+                x:Name="FocusHolder"
+                Text="{Static strings:XIResources.AddVoicePopup_VoiceDesignDescription}"
+            FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue"
+                Command="{Binding GoToVoiceDesignCommand}"
+                CommandParameter="{Binding Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type toolkit:Popup}}}"
+            Margin="20,20,20,20"/>
+
+        <!-- Below styles are dependent on the user's subscription in the website interface, it is not implemented here though. -->
+        <Grid ColumnDefinitions="*, *"
+              Margin="20,20,20,20">
+            <Button Text="{Static strings:XIResources.AddVoicePopup_InstantVoiceCloningDescription}"
+                                FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" Background="Aqua"
+                    Command="{Binding GoToInstantVoiceCloningCommand}"
+                    Grid.Column="0"/>
+                <Button Text="{Static strings:XIResources.Subscribe}"
+                                FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="DarkBlue" Background="Aqua"
+                    IsVisible="{Binding User.Subscription.CanUseInstantVoiceCloning, Converter={toolkit:InvertedBoolConverter}}"
+                    Command="{Binding GoToSubscriptionCommand}"
+                    Grid.Column="1"/>
+            </Grid>
+
+        <Button Text="{Static strings:XIResources.AddVoicePopup_VoiceLibraryDescription}"
+                    Command="{Binding GoToVoiceLibraryCommand}"
+                                                    FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue"
+                Margin="20,20,20,20"/>
+
+        <Grid ColumnDefinitions="*, *"
+              Margin="20,20,20,20">
+            <Button Text="{Static strings:XIResources.AddVoicePopup_ProfessionalVoiceCloningDescription}"
+                    Command="{Binding GoToProfessionalVoiceCloningCommand}"
+                                                    FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" Background="Aqua"
+                    Grid.Column="0"/>
+                <Button Text="{Static strings:XIResources.Subscribe}"
+                                                    FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="DarkBlue" Background="Aqua"
+                                        IsVisible="{Binding User.Subscription.CanUseProfessionalVoiceCloning, Converter={toolkit:InvertedBoolConverter}}"
+                    Command="{Binding GoToSubscriptionCommand}"
+                    Grid.Column="1"/>
+            </Grid>
+        </VerticalStackLayout>
+</toolkit:Popup>

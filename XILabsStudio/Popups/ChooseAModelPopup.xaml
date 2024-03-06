@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+               xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+             x:Class="XILabsStudio.Popups.ChooseAModelPopup"
+               VerticalOptions="Center" HorizontalOptions="Center"
+               Size="600, 500">
+
+    <toolkit:Popup.BindingContext>
+        <viewModels:ChooseAModelViewModel />
+    </toolkit:Popup.BindingContext>
+
+        <Grid
+            RowDefinitions="125, 375"
+            RowSpacing="12">
+            <!-- As MAUI toolkit Popup control does not support behaviors, we will use the main layout behavior. -->
+            <Grid.Behaviors>
+                <toolkit:EventToCommandBehavior
+                EventName="Loaded"
+                Command="{Binding InitializeCommand}"/>
+            </Grid.Behaviors>
+
+        <Label
+            Text="{x:Static strings:XIResources.ChooseAModelPopup_ChooseAModel}"
+                        FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start"
+                Grid.Row="0"/>
+
+        <ListView ItemsSource="{Binding Models}"
+                  HeightRequest="375"
+                  SelectedItem="{Binding SelectedModel, Mode=TwoWay}"
+                  ItemSelected="ModelSelected" ItemTapped="ModelTapped"
+                  RowHeight="125"
+                  CachingStrategy="RetainElement"
+                  Grid.Row="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid RowDefinitions="*, *"
+                                  RowSpacing="16">
+                                <Label
+                                    Text="{Binding Name}"
+                                                FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start"
+                                       Grid.Row="0"/>
+                                <Label
+                                    Text="{Binding AllAbout}"
+            FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start"
+                                       Grid.Row="1"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+</toolkit:Popup>

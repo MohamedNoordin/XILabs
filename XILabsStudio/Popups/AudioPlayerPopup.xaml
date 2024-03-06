@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                              xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+               xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+               xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             x:Class="XILabsStudio.Popups.AudioPlayerPopup"
+               VerticalOptions="Start" HorizontalOptions="Center"
+               Size="400,600"
+               Closed="Popup_Closed">
+
+    <Grid
+        RowDefinitions="*,*,*,*"
+        RowSpacing="32">
+        <Grid.Behaviors>
+            <toolkit:EventToCommandBehavior
+                EventName="Loaded"
+                Command="{Binding InitializeCommand}"/>
+        </Grid.Behaviors>
+
+        <HorizontalStackLayout Spacing="8"
+            Grid.Row="0">
+            <ImageButton
+            SemanticProperties.Description="{x:Static strings:XIResources.AudioPlayerPopup_MinimizeAudioPlayer}"
+                Source="minimize.png"
+                Clicked="MinimizeAudioPlayer"
+                VerticalOptions="Center"/>
+
+            <Label
+                VerticalOptions="Center">
+                <Label.Text>
+                    <MultiBinding StringFormat="{}{0}, {1}">
+                        <Binding Path="Voice.Title" />
+                        <Binding Path="CurrentDateTime" />
+                    </MultiBinding>
+                </Label.Text>
+            </Label>
+        </HorizontalStackLayout>
+    
+        <Grid
+            ColumnDefinitions="*,*,*" ColumnSpacing="8"
+            Grid.Row="1">
+            <ImageButton
+                SemanticProperties.Description="{x:Static strings:XIResources.AudioPlayerPopup_Rewind}"
+                Source="rewind_audio.png"
+                Command="{Binding RewindCommand}"
+                Grid.Column="           0"/>
+            <ImageButton
+                SemanticProperties.Description="{x:Static strings:XIResources.AudioPlayerPopup_PlayPause}"
+                Source="{Binding PlayPauseIconSource}"
+                Command="{Binding PlayPauseCommand}"
+                Grid.Column="1"/>
+            <ImageButton
+                SemanticProperties.Description="{x:Static strings:XIResources.AudioPlayerPopup_FastForward}"
+                Source="fastforward_audio.png"
+                Command="{Binding FastForwardCommand}"
+                Grid.Column="2"/>
+        </Grid>
+        
+        <VerticalStackLayout Spacing="8"
+            Grid.Row="2">
+            <Label Text="{Binding CurrentPositionFormatted}"/>
+            <Slider SemanticProperties.Description="{Binding CurrentPositionFormatted}"
+                Maximum="{Binding Duration}" Value="{Binding    CurrentPosition, Mode=OneWay}">
+                <Slider.Behaviors>
+                    <toolkit:EventToCommandBehavior
+                        EventName="ValueChanged"
+                        Command="{Binding UpdatePlaybackPositionCommand}"/>
+                </Slider.Behaviors>
+            </Slider>
+        </VerticalStackLayout>
+
+        <Grid
+            ColumnDefinitions="*,*,*,*" ColumnSpacing="8"
+            Grid.Row="3">
+            <ImageButton
+                SemanticProperties.Description="{x:Static strings:XIResources.AudioPlayerPopup_ThumbsUp}"
+                Source="like.png"
+                Grid.Column="0"/>
+            <ImageButton
+                SemanticProperties.Description="{x:Static strings:XIResources.AudioPlayerPopup_ThumbsDown}"
+                Source="dislike.png"
+                Grid.Column="1"/>
+            <ImageButton
+                SemanticProperties.Description="{x:Static strings:XIResources.AudioPlayerPopup_DownloadAudio}"
+                Source="download.png"
+                Command="{Binding DownloadAudioCommand}"
+                Grid.Column="2"/>
+            <ImageButton
+                SemanticProperties.Description="{x:Static strings:XIResources.AudioPlayerPopup_ShareAudio}"
+                Source="share.png"
+                Command="{Binding ShareAudioCommand}"
+                Grid.Column="3"/>
+        </Grid>
+    </Grid>
+</toolkit:Popup>

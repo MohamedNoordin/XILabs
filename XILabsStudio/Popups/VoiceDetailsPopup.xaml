@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                          xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                              xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+               xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+               xmlns:system="clr-namespace:System;assembly=mscorlib"
+             x:Class="XILabsStudio.Popups.VoiceDetailsPopup"
+                            VerticalOptions="Center" HorizontalOptions="Center"
+               Size="500,900">
+
+    <ScrollView>
+        <Grid
+            RowDefinitions="*, *, *, *, *">
+            <Grid.Behaviors>
+                <toolkit:EventToCommandBehavior
+                EventName="Loaded"
+                Command="{Binding InitializeCommand}"/>
+            </Grid.Behaviors>
+
+            <Label Text="{Binding PageTitle}"
+                           FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start"
+               Grid.Row="0"/>
+
+            <VerticalStackLayout
+                                 Grid.Row="1">
+                <Label Text="{Static strings:XIResources.Name}"
+                           FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start" />
+
+                <Entry Placeholder="{Static strings:XIResources.Name}"
+                       Text="{Binding VoiceName, Mode=TwoWay}"
+                           FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="Black" HorizontalTextAlignment="Start" />
+            </VerticalStackLayout>
+
+            <Editor Placeholder="{Static strings:XIResources.Labels}"
+                       IsReadOnly="True"
+                           FontFamily="AtkinsonHyperlegible" FontSize="9.5"
+            TextColor="DarkBlue" Background="MediumPurple" HorizontalTextAlignment="Start" 
+                           Grid.Row="2">
+
+                <Editor.Text>
+                    <MultiBinding StringFormat="{}{0}: {1}{2}{3}: {4}{5}{6}: {7}">
+                        <Binding Source="{Static strings:XIResources.Accent}"/>
+                        <Binding Path="Accent"/>
+                        <Binding Source="{Static system:Environment.NewLine}"/>
+                        <Binding Source="{Static strings:XIResources.Age}"/>
+                        <Binding Path="Age"/>
+                        <Binding Source="{Static system:Environment.NewLine}"/>
+                        <Binding Source="{Static strings:XIResources.Gender}"/>
+                        <Binding Path="Gender"/>
+                    </MultiBinding>
+                </Editor.Text>
+            </Editor>
+
+            <VerticalStackLayout
+                                 Grid.Row="3">
+                <Label Text="{Static strings:XIResources.Description}"
+                           FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start" />
+
+                <Editor Placeholder="{Static strings:XIResources.VoiceDetailsPopup_HowWouldYouDescribeTheVoice}"
+                        Text="{Binding VoiceDescription, Mode=TwoWay}"
+                           FontFamily="AtkinsonHyperlegible" FontSize="12.5"
+            TextColor="Black" HorizontalTextAlignment="Start" />
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout
+                Grid.Row="4">
+                <Button
+                    Text="{x:Static strings:XIResources.Cancel}"
+                                FontFamily="Inter" FontSize="11"
+            TextColor="DarkBlue" HorizontalOptions="Center"
+                    Command="{Binding CancelCommand}"
+                    CommandParameter="{Binding Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type toolkit:Popup}}}"/>
+
+                <Button
+                    Text="{Binding MainAction}"
+                                FontFamily="Inter" FontSize="11"
+            TextColor="White" BackgroundColor="BlueViolet" HorizontalOptions="Center"
+                    Command="{Binding MainActionCommand}"
+                    CommandParameter="{Binding Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type toolkit:Popup}}}"/>
+            </HorizontalStackLayout>
+
+        </Grid>
+    </ScrollView>
+</toolkit:Popup>

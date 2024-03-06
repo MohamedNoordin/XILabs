@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="XILabsStudio.MobileAppShell"
+    xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:local="clr-namespace:XILabsStudio.Platforms.Windows"
+    xmlns:pages="clr-namespace:XILabsStudio.Pages"
+        xmlns:views="clr-namespace:XILabsStudio.Views"
+    xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+    FlyoutBehavior="Flyout">
+
+    <Shell.BindingContext>
+        <viewModels:AppShellViewModel />
+    </Shell.BindingContext>
+
+    <Shell.Behaviors>
+        <toolkit:EventToCommandBehavior
+                EventName="Loaded"
+                Command="{Binding InitializeCommand}"/>
+    </Shell.Behaviors>
+
+    <Shell.TitleView>
+        <views:ConnectivityIndicatorView IsVisible="{Binding IsConnected, Converter={toolkit:InvertedBoolConverter}}"/>
+    </Shell.TitleView>
+
+    <Shell.ToolbarItems>
+        <ToolbarItem Text="{Static strings:XIResources.Subscription}"  Command="{Binding GoToSubscriptionCommand}"/>
+        <ToolbarItem Text="{Static strings:XIResources.UsageAnalytics}" Command="{Binding GoToUsageAnalyticsCommand}"/>
+        <ToolbarItem Text="{Static strings:XIResources.SignOut}" Command="{Binding SignOutCommand}" IconImageSource="sign_out.png"/>
+    </Shell.ToolbarItems>
+
+    <ShellContent
+        Title="{x:Static strings:XIResources.Shell_SpeechSynthesisTabTitle}"
+                ToolTipProperties.Text="{x:Static strings:XIResources.Shell_SpeechSynthesisTabTooltip}"
+        ContentTemplate="{DataTemplate pages:SpeechSynthesisPage}"
+        Route="SpeechSynthesisPage"/>
+
+    <ShellContent
+        Title="{x:Static strings:XIResources.Shell_ProjectsTabTitle}"
+                ToolTipProperties.Text="{x:Static strings:XIResources.Shell_projectsTabTooltip}"
+        ContentTemplate="{DataTemplate pages:ProjectsPage}"
+        Route="ProjectsPage"/>
+
+    <ShellContent
+        Title="{x:Static strings:XIResources.Shell_DubbingTabTitle}"
+                ToolTipProperties.Text="{x:Static strings:XIResources.Shell_DubbingTabTooltip}"
+        ContentTemplate="{DataTemplate pages:DubbingPage}"
+        Route="DubbingPage"/>
+
+    <ShellContent
+        Title="{x:Static strings:XIResources.Shell_VoiceLabTabTitle}"
+                ToolTipProperties.Text="{x:Static strings:XIResources.Shell_VoiceLabTabTooltip}"
+        ContentTemplate="{DataTemplate pages:VoiceLabPage}"
+        Route="VoiceLabPage"/>
+
+    <ShellContent
+        Title="{x:Static strings:XIResources.Shell_VoiceLibraryTabTitle}"
+                ToolTipProperties.Text="{x:Static strings:XIResources.Shell_VoiceLibraryTabTooltip}"
+        ContentTemplate="{DataTemplate pages:VoiceLibraryPage}"
+        Route="VoiceLibraryPage"/>
+
+    <ShellContent
+        Title="{x:Static strings:XIResources.Shell_HistoryTabTitle}"
+        ContentTemplate="{DataTemplate pages:HistoryPage}"
+        Route="HistoryPage"/>
+
+</Shell>

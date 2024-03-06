@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                          xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                              xmlns:strings="clr-namespace:XILabsStudio.Resources.Strings"
+                              xmlns:converters="clr-namespace:XILabsStudio.API.DataModels.Converters"
+               xmlns:viewModels="clr-namespace:XILabsStudio.ViewModels"
+               xmlns:system="clr-namespace:System;assembly=mscorlib"
+             x:Class="XILabsStudio.Popups.VoiceDesignPopup"
+                            VerticalOptions="Center" HorizontalOptions="Center"
+               Size="500,900"
+               CanBeDismissedByTappingOutsideOfPopup="False">
+
+    <ScrollView>
+        <Grid
+            RowDefinitions="*, *, *, *, *, *, *, *, *, *"
+            RowSpacing="16">
+            <Grid.BindingContext>
+                <viewModels:VoiceDesignViewModel />
+            </Grid.BindingContext>
+
+            <Grid.Behaviors>
+                <toolkit:EventToCommandBehavior
+                EventName="Loaded"
+                Command="{Binding InitializeCommand}"/>
+            </Grid.Behaviors>
+
+            <HorizontalStackLayout
+                Grid.Row="0">
+                <Label Text="{Static strings:XIResources.VoiceDesignPopup_GenerateVoice}"
+                           FontFamily="AtkinsonHyperlegible" FontSize="14"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start"/>
+
+                <Button
+                    Text="{Static strings:XIResources.Close}"
+                    Command="{Binding CloseCommand}"
+                    CommandParameter="{Binding Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type toolkit:Popup}}}"/>
+
+            </HorizontalStackLayout>
+
+            <Picker
+                x:Name="GetFocus"
+                Title="{Static strings:XIResources.Gender}"
+                    TitleColor="DarkBlue"
+                                               FontFamily="Inter" FontSize="11"
+            TextColor="DarkBlue" HorizontalTextAlignment="Center"
+                    ItemsSource="{Binding Genders}"
+                    ItemDisplayBinding="{Binding}"
+                    SelectedIndex="{Binding SelectedGender, Mode=TwoWay, FallbackValue=1, Converter={converters:IntToEnumConverter}}"
+                    Grid.Row="1"/>
+            
+            <Picker Title="{Static strings:XIResources.Age}"
+                    TitleColor="DarkBlue"
+                                               FontFamily="Inter" FontSize="11"
+            TextColor="DarkBlue" HorizontalTextAlignment="Center"
+                    ItemsSource="{Binding Ages}"
+                    ItemDisplayBinding="{Binding}"
+                    SelectedIndex="{Binding SelectedAge, Mode=TwoWay, FallbackValue=1, Converter={converters:IntToEnumConverter}}"
+                    Grid.Row="2"/>
+            
+            <Picker Title="{Static strings:XIResources.Accent}"
+                    TitleColor="DarkBlue"
+                                               FontFamily="Inter" FontSize="11"
+            TextColor="DarkBlue" HorizontalTextAlignment="Center"
+                    ItemsSource="{Binding Accents}"
+                    ItemDisplayBinding="{Binding}"
+                    SelectedIndex="{Binding SelectedAccent, Mode=TwoWay, FallbackValue=1, Converter={converters:IntToEnumConverter}}"
+                    Grid.Row="3"/>
+
+            <VerticalStackLayout
+                                 Grid.Row="4">
+                    <Label Text="{Static strings:XIResources.VoiceDesignPopup_AccentStrength}"
+                           FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="DarkBlue" HorizontalTextAlignment="Start" 
+                           Margin="20,20,20,20"/>
+                <HorizontalStackLayout RadioButtonGroup.GroupName="AccentStrength"
+
+                                       RadioButtonGroup.SelectedValue="{Binding SelectedAccentStrength}">
+                    <RadioButton Content="{Static strings:XIResources.Low}" Value="Low"/>
+                    <RadioButton Content="{Static strings:XIResources.Medium}" Value="Medium" IsChecked="True"/>
+                    <RadioButton Content="{Static strings:XIResources.High}" Value="High"/>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <Label
+                    x:Name="TTSTextLabel"
+                    Text="{x:Static strings:XIResources.SpeechSynthesisPage_TTSInput}"
+            FontFamily="AtkinsonHyperlegible" FontSize="12.5"
+            TextColor="Black" HorizontalTextAlignment="Start"
+                    Grid.Row="5"/>
+
+                <Editor
+                    x:Name="TTSInputEditor"
+                    SemanticProperties.Hint="{Binding Source={x:Reference TTSTextLabel}, Path=Text}"
+                    Text="{Static strings:XIResources.VoiceDesignPopup_DefaultText}"
+                    MaxLength="1000"
+                    AutoSize="TextChanges"
+            FontFamily="AtkinsonHyperlegible" FontSize="Body"
+            TextColor="Black" HorizontalTextAlignment="Start"
+                    Grid.Row="6"/>
+
+                <Label
+                    x:Name="QuotaLabel"
+                                FontFamily="AtkinsonHyperlegible" FontSize="11"
+            TextColor="Blue" HorizontalTextAlignment="Start"
+                    Grid.Row="7">
+                    <Label.Text>
+                        <MultiBinding StringFormat="{}{0} / {1}{2}{3}: {4}">
+                            <Binding Source="{x:Reference TTSInputEditor}" Path="Text.Length" FallbackValue="0"/>
+                            <Binding Source="{x:Reference TTSInputEditor}" Path="MaxLength" FallbackValue="1000"/>
+                            <Binding Source="{x:Static system:Environment.NewLine}"/>
+                            <Binding Source="{x:Static strings:XIResources.SpeechSynthesisPage_TotalRemainingQuota}"/>
+                            <MultiBinding Converter="{toolkit:MultiMathExpressionConverter}" ConverterParameter="x0 - x1">
+                                <Binding Path="User.Subscription.CharacterLimit" FallbackValue="0"/>
+                                <Binding Path="User.Subscription.CharacterCount" FallbackValue="0"/>
+                            </MultiBinding>
+                        </MultiBinding>
+                    </Label.Text>
+                </Label>
+
+                <Button
+                    Text="{x:Static strings:XIResources.SpeechSynthesisPage_Generate}"
+                                FontFamily="Inter" FontSize="11"
+            TextColor="DarkBlue" HorizontalOptions="Center"
+                    Command="{Binding GenerateVoiceCommand}"
+                    CommandParameter="{Binding Source={x:Reference TTSInputEditor}, Path=Text}"
+                    Grid.Row="8"/>
+
+                <Button
+                    Text="{x:Static strings:XIResources.VoiceDesignPopup_UseVoice}"
+                                FontFamily="Inter" FontSize="11"
+            TextColor="DarkBlue" HorizontalOptions="Center"
+                    Command="{Binding UseVoiceCommand}"
+                    Grid.Row="9"/>
+
+        </Grid>
+    </ScrollView>
+</toolkit:Popup>
