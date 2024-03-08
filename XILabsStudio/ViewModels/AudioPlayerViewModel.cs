@@ -135,6 +135,7 @@ if (DeviceInfo.Platform == DevicePlatform.Android
                 && (await Permissions.CheckStatusAsync<Permissions.Media>() != PermissionStatus.Granted || await Permissions.CheckStatusAsync<Permissions.StorageWrite>() != PermissionStatus.Granted))
             await Shell.Current.DisplayAlert(XIResources.OnAndroid_AskForPermissionTitle, XIResources.OnAndroid_AskForPermissionMessage, "OK");
 
+            speechStream.Seek(0, SeekOrigin.Begin);
             var fileSaverResult = await FileSaver.Default.SaveAsync($"XILabs {Voice.Title} {CurrentDateTime}.mp3", speechStream, new CancellationToken());
             if (fileSaverResult.IsSuccessful)
                 await Toast.Make(XIResources.AudioPlayerPopup_DownloadAudio_FileSaved).Show();
